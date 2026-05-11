@@ -1,0 +1,27 @@
+FROM python:3.12-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+
+WORKDIR /app
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends build-essential libpq-dev netcat-openbsd libcairo2-dev pkg-config gosu \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY requirements.txt .
+RUN pip install --upgrade pip && pip install -r requirements.txt
+
+COPY . .
+
+RUN mkdir -p /vol/static /vol/media \
+    && groupadd --system waterpark \
+    && useradd --system --gid waterpark --home /app waterpark \
+    && chown -R waterpark:waterpark /app /vol
+COPY scripts/celery-start.sh /celery-start.sh
+RUN chmod +x /celery-start.sh
+
+ENTRYPOINT ["/celery-start.sh"]
+
+# Default command to run worker
+CMD ["celery", "-A", "WaterPark", "worker", "--loglevel=info"]
