@@ -70,19 +70,6 @@ services:
     command: >
       celery -A WaterPark beat --loglevel=${CELERY_LOG_LEVEL:-info} --scheduler django_celery_beat.schedulers:DatabaseScheduler
 
-  nginx:
-    build:
-      context: .
-      dockerfile: Dockerfile.nginx
-    container_name: waterpark_nginx
-    ports:
-      - "80:80"
-    volumes:
-      - static_volume:/vol/static:ro
-      - media_volume:/vol/media:ro
-    depends_on:
-      - web
-    restart: unless-stopped
 
 volumes:
   postgres_data:
