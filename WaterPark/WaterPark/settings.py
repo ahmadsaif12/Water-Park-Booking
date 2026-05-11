@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'drf_spectacular',
     
     # Local apps
-    # Add your apps here
+    "app.website_settings",
 ]
 
 REST_FRAMEWORK = {
