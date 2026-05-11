@@ -1,10 +1,18 @@
-.PHONY: up down restart build logs ps shell enter migrate migrations superuser test
+ifneq ("$(wildcard .env)","")
+    include .env
+    export
+endif
+
+.PHONY: up down down-v restart build logs ps shell enter migrate migrations superuser test db-shell
 
 up:
 	docker compose up -d
 
 down:
 	docker compose down
+
+down-v:
+	docker compose down -v
 
 restart:
 	docker compose restart
@@ -35,3 +43,6 @@ superuser:
 
 test:
 	docker compose exec web python manage.py test
+
+db-shell:
+	docker compose exec db psql -U $(DB_USER) -d $(DB_NAME)
