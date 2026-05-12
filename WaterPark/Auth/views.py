@@ -28,7 +28,6 @@ def get_tokens_for_user(user):
 
 
 @extend_schema(
-    summary="Login",
     description="Authenticate with email and password. Returns JWT access and refresh tokens.",
     request=LoginSerializer,
     responses={
@@ -77,7 +76,6 @@ def login(request):
 
 
 @extend_schema(
-    summary="Register",
     description="Register a new user. Role defaults to 'author'. Creates AuthorProfile automatically.",
     request=RegisterSerializer,
     responses={
@@ -122,7 +120,6 @@ def register(request):
 
 
 @extend_schema(
-    summary="Logout",
     description="Blacklist the refresh token to log out.",
     request=inline_serializer(
         name="LogoutRequest",
@@ -154,7 +151,6 @@ def logout(request):
 
 
 @extend_schema(
-    summary="Refresh Access Token",
     description="Provide a valid refresh token to get a new access token.",
     request=inline_serializer(
         name="TokenRefreshRequest",
@@ -187,7 +183,6 @@ def token_refresh(request):
 
 
 @extend_schema(
-    summary="Get / Update Current User",
     description="GET returns the logged-in user's profile. PATCH updates first_name, last_name, or avatar.",
     request=UserSerializer,
     responses={
@@ -196,7 +191,7 @@ def token_refresh(request):
         401: OpenApiResponse(description="Not authenticated"),
     },
 )
-@api_view(["GET", "PATCH"])
+@api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def me(request):
     if request.method == "GET":
@@ -210,7 +205,6 @@ def me(request):
 
 
 @extend_schema(
-    summary="Change Password",
     description="Change the current user's password. Requires old password for verification.",
     request=ChangePasswordSerializer,
     responses={

@@ -1,8 +1,8 @@
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
+from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
-from rest_framework import status
-from drf_spectacular.utils import extend_schema, OpenApiResponse
+from drf_spectacular.utils import extend_schema
 
 from .models import (
     SiteInfo,
@@ -13,6 +13,7 @@ from .models import (
     GalleryImage,
     AboutUs,
 )
+
 from .serializers import (
     SiteInfoSerializer,
     SocialMediaLinksSerializer,
@@ -25,108 +26,114 @@ from .serializers import (
 
 
 @extend_schema(
-    summary="Get Site Information",
-    description="Returns the main site information like name, email, phone, address and logo.",
-    responses={
-        200: SiteInfoSerializer,
-        404: OpenApiResponse(description="Site info not found"),
-    },
+    operation_id="get_site_info",
+    summary="Get site information",
+    responses={200: SiteInfoSerializer},
 )
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def site_info(request):
     obj = SiteInfo.objects.first()
+
     if not obj:
-        return Response(
-            {"detail": "Site info not found."}, status=status.HTTP_404_NOT_FOUND
-        )
-    return Response(SiteInfoSerializer(obj).data)
+        raise NotFound("Site info not found.")
+
+    serializer = SiteInfoSerializer(obj)
+
+    return Response(serializer.data)
 
 
 @extend_schema(
-    summary="Get Social Media Links",
-    description="Returns all social media links including Facebook, X, Instagram and LinkedIn.",
-    responses={
-        200: SocialMediaLinksSerializer,
-        404: OpenApiResponse(description="Social media links not found"),
-    },
+    operation_id="get_social_media_links",
+    summary="Get social media links",
+    responses={200: SocialMediaLinksSerializer},
 )
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def social_media_links(request):
     obj = SocialMediaLinks.objects.first()
+
     if not obj:
-        return Response(
-            {"detail": "Social media links not found."},
-            status=status.HTTP_404_NOT_FOUND,
-        )
-    return Response(SocialMediaLinksSerializer(obj).data)
+        raise NotFound("Social media links not found.")
+
+    serializer = SocialMediaLinksSerializer(obj)
+
+    return Response(serializer.data)
 
 
 @extend_schema(
-    summary="Get All Sliders",
-    description="Returns a list of all homepage sliders with title, subtitle, description and image.",
+    operation_id="list_sliders",
+    summary="Get all sliders",
     responses={200: SliderSerializer(many=True)},
 )
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def sliders(request):
-    return Response(SliderSerializer(Slider.objects.all(), many=True).data)
+    queryset = Slider.objects.all()
+
+    serializer = SliderSerializer(queryset, many=True)
+
+    return Response(serializer.data)
 
 
 @extend_schema(
-    summary="Get Active Testimonials",
-    description="Returns all active client testimonials with name, designation, feedback, rating and image.",
+    operation_id="list_testimonials",
+    summary="Get active testimonials",
     responses={200: TestimonialSerializer(many=True)},
 )
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def testimonials(request):
-    return Response(
-        TestimonialSerializer(
-            Testimonial.objects.filter(is_active=True), many=True
-        ).data
-    )
+    queryset = Testimonial.objects.filter(is_active=True)
+
+    serializer = TestimonialSerializer(queryset, many=True)
+
+    return Response(serializer.data)
 
 
 @extend_schema(
-    summary="Get Active Team Members",
-    description="Returns all active team members with name, designation, bio, image and social links.",
+    operation_id="list_team_members",
+    summary="Get active team members",
     responses={200: TeamMemberSerializer(many=True)},
 )
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def team_members(request):
-    return Response(
-        TeamMemberSerializer(TeamMember.objects.filter(is_active=True), many=True).data
-    )
+    queryset = TeamMember.objects.filter(is_active=True)
+
+    serializer = TeamMemberSerializer(queryset, many=True)
+
+    return Response(serializer.data)
 
 
 @extend_schema(
-    summary="Get Gallery Images",
-    description="Returns all gallery images ordered by upload date.",
+    operation_id="list_gallery_images",
+    summary="Get gallery images",
     responses={200: GalleryImageSerializer(many=True)},
 )
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def gallery_images(request):
-    return Response(GalleryImageSerializer(GalleryImage.objects.all(), many=True).data)
+    queryset = GalleryImage.objects.all()
+
+    serializer = GalleryImageSerializer(queryset, many=True)
+
+    return Response(serializer.data)
 
 
 @extend_schema(
-    summary="Get About Us",
-    description="Returns About Us information including title, description, years of experience, happy visitors and awards.",
-    responses={
-        200: AboutUsSerializer,
-        404: OpenApiResponse(description="About Us not found"),
-    },
+    operation_id="get_about_us",
+    summary="Get about us",
+    responses={200: AboutUsSerializer},
 )
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def about_us(request):
     obj = AboutUs.objects.first()
+
     if not obj:
-        return Response(
-            {"detail": "About Us not found."}, status=status.HTTP_404_NOT_FOUND
-        )
-    return Response(AboutUsSerializer(obj).data)
+        raise NotFound("About Us not found.")
+
+    serializer = AboutUsSerializer(obj)
+
+    return Response(serializer.data)

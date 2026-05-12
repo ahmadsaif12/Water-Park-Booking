@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     # Local
     "misc",
     "Auth",
+    "cms",
 ]
 
 MIDDLEWARE = [
