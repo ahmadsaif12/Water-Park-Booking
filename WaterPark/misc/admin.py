@@ -27,7 +27,7 @@ class SiteInfoAdmin(admin.ModelAdmin):
         "site_hr_email_display",
         "site_fax_display",
         "site_address_display",
-        "site_contry",
+        "site_country",
         "site_city",
         "image_tag",
     )
