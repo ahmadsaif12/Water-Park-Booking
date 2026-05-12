@@ -1,7 +1,9 @@
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework import status
 from drf_spectacular.utils import extend_schema, OpenApiResponse
+
 from .models import (
     SiteInfo,
     SocialMediaLinks,
@@ -31,6 +33,7 @@ from .serializers import (
     },
 )
 @api_view(["GET"])
+@permission_classes([AllowAny])
 def site_info(request):
     obj = SiteInfo.objects.first()
     if not obj:
@@ -49,6 +52,7 @@ def site_info(request):
     },
 )
 @api_view(["GET"])
+@permission_classes([AllowAny])
 def social_media_links(request):
     obj = SocialMediaLinks.objects.first()
     if not obj:
@@ -65,9 +69,9 @@ def social_media_links(request):
     responses={200: SliderSerializer(many=True)},
 )
 @api_view(["GET"])
+@permission_classes([AllowAny])
 def sliders(request):
-    objs = Slider.objects.all()
-    return Response(SliderSerializer(objs, many=True).data)
+    return Response(SliderSerializer(Slider.objects.all(), many=True).data)
 
 
 @extend_schema(
@@ -76,9 +80,13 @@ def sliders(request):
     responses={200: TestimonialSerializer(many=True)},
 )
 @api_view(["GET"])
+@permission_classes([AllowAny])
 def testimonials(request):
-    objs = Testimonial.objects.filter(is_active=True)
-    return Response(TestimonialSerializer(objs, many=True).data)
+    return Response(
+        TestimonialSerializer(
+            Testimonial.objects.filter(is_active=True), many=True
+        ).data
+    )
 
 
 @extend_schema(
@@ -87,9 +95,11 @@ def testimonials(request):
     responses={200: TeamMemberSerializer(many=True)},
 )
 @api_view(["GET"])
+@permission_classes([AllowAny])
 def team_members(request):
-    objs = TeamMember.objects.filter(is_active=True)
-    return Response(TeamMemberSerializer(objs, many=True).data)
+    return Response(
+        TeamMemberSerializer(TeamMember.objects.filter(is_active=True), many=True).data
+    )
 
 
 @extend_schema(
@@ -98,9 +108,9 @@ def team_members(request):
     responses={200: GalleryImageSerializer(many=True)},
 )
 @api_view(["GET"])
+@permission_classes([AllowAny])
 def gallery_images(request):
-    objs = GalleryImage.objects.all()
-    return Response(GalleryImageSerializer(objs, many=True).data)
+    return Response(GalleryImageSerializer(GalleryImage.objects.all(), many=True).data)
 
 
 @extend_schema(
@@ -112,6 +122,7 @@ def gallery_images(request):
     },
 )
 @api_view(["GET"])
+@permission_classes([AllowAny])
 def about_us(request):
     obj = AboutUs.objects.first()
     if not obj:

@@ -19,6 +19,7 @@ urlpatterns = [
     path("tinymce/", include("tinymce.urls")),
     path("health/", health_check),
     # Apps APIs
+    path("api/auth/", include("Auth.urls")),
     path("api/misc/", include("misc.urls")),
     # API Schema & Docs
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
